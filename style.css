@@ -1,0 +1,164 @@
+:root {
+  --bg-dark: #000;
+  --bg-panel: #111;
+  --accent: #ffaa00;
+  --accent-light: #ffcc33;
+  --text-light: #fff;
+  --text-muted: #ccc;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Vazirmatn', 'Roboto', sans-serif;
+  direction: rtl;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  line-height: 1.6;
+}
+
+.container {
+  background-image: url("https://raw.githubusercontent.com/EDTA1000/-PowerPoint-Python-Codes-and-Libraries/refs/heads/main/a.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 40px 20px;
+  text-align: center;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+}
+
+.container h2, .container p {
+  color: var(--text-light);
+}
+#preview {
+  margin-top: 8px;
+  font-size: 1.2em;
+  color: var(--accent);
+  text-align: left;
+  direction: ltr;
+  font-family: monospace;
+}
+#threeDContainer {
+  width: 800px;
+  height: 600px;
+  margin: 0 auto;
+}
+
+.download-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--text-light);
+  text-decoration: none;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+}
+.download-btn:hover {
+  background: var(--accent-light);
+  color: var(--bg-dark);
+}
+
+#controls {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px var(--accent);
+  width: 340px;
+}
+
+input, select, button {
+  width: 100%;
+  margin: 6px 0;
+  padding: 10px;
+  font-size: 1em;
+  background-color: #222;
+  color: var(--text-light);
+  border: 1px solid #555;
+  border-radius: 6px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+button:hover, select:hover, input:focus {
+  background-color: var(--accent);
+  color: var(--bg-dark);
+  outline: none;
+}
+
+#canvasWrapper {
+  position: relative;
+  margin-top: 20px;
+  background-color: var(--bg-dark);
+  min-height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+#gridCA, #gridMath, #threeDContainer {
+  position: absolute;
+  top: 0;
+}
+
+canvas {
+  display: block;
+  background-color: #000;
+  border: 1px solid #333; 
+  max-width: 100%;
+}
+
+#mathControls {
+  margin: 40px 20px;
+  padding: 20px;
+  background-color: var(--bg-panel);
+  border-radius: 12px;
+  box-shadow: 0 0 8px var(--accent);
+}
+
+#output {
+  margin-top: 10px;
+  font-size: 1.2em;
+  direction: ltr;
+  text-align: left;
+  color: var(--accent);
+  font-family: monospace;
+}
+
+.math-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 10px;
+  margin-top: 20px;
+}
+.math-buttons button {
+  padding: 10px;
+  font-size: 0.9em;
+  background-color: #222;
+  color: var(--text-light);
+  border: 1px solid #555;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.math-buttons button:hover {
+  background-color: var(--accent);
+  color: var(--bg-dark);
+  transform: translateY(-2px);
+}
+
+.math-symbols {
+  margin-top: 15px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+.math-symbols button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+}

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="آزمایشگاه ریاضی و اتوماتای سلولی با کدهای بهبود یافته/Math Lab and Cellular Automata with Improved Codes">
+    <meta name="keywords" content="Python, Automata, Octonion, Math, PowerPoint,پایتون، اتوماتا، اوکتیون، ریاضی، پاورپوینت">
+    <title>آزمایشگاه ریاضی و اتوماتای سلولی/Math Lab and Cellular Automata</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Calculus.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Solve.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Extra.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+  	window.MathJax = {
+   	 tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  	  svg: { fontCache: 'global' }
+ 	 };
+    </script>
+<script>
+function renderMath() {
+    const inputField = document.getElementById("octExpr");
+    const displayArea = document.getElementById("preview");
+    
+    if (!inputField || !displayArea) return;
+
+    if (typeof transformInput === "function") transformInput(inputField);
+    
+    let content = inputField.value;
+    if (typeof getColoredMathHtml === "function") {
+        displayArea.innerHTML = getColoredMathHtml(content);
+    } else {
+        displayArea.innerText = content;
+    }
+    
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+    }
+}
+
+window.onload = function() {
+    if (window.CA_Controller) CA_Controller.init();
+    document.getElementById("gridMath").style.display = "block";
+    document.getElementById("gridCA").style.display = "none";
+    document.getElementById("threeDContainer").style.display = "none";
+    if (window.MathLab && MathLab.drawAxes) {
+        MathLab.drawAxes();
+    }
+};
+</script>
+</head>
+<body>
+    <div class="container">
+        <h2>پاورپوینت و اتوماتای سلولی / PowerPoint & Cellular Automaton </h2>
+        <p>در این پاورپوینت درباره کدهای پایتون و اتوماتای سلولی توضیح داده شده است./This PowerPoint explains Python codes and cellular automata.</p>
+        <a class="download-btn" href="little_project.pptx" download>دانلود پاورپوینت / Download PowerPoint</a>
+    </div>
+
+    <section id="controls" aria-label="کنترل‌های اتوماتای سلولی/Cellular automata controls">
+        <button onclick="CA_Controller.startSimulation()">شروع شبیه سازی اتوماتوی سلولی/Starting cellular automaton simulation</button>
+        <button onclick="CA_Controller.stopSimulation()">توقف/stop</button>
+        <button onclick="CA_Controller.clearGrid()">clear/پاک‌سازی</button>
+        <label>زوم اتوماتا:</label>
+        <input type="range" min="0.5" max="5" step="0.1" value="1" oninput="CA_Controller.updateCellZoom(this.value)">
+        <label>speed/سرعت:</label>
+        <input type="range" id="speed" min="0.5" max="1000" step="0.5" value="1" oninput="CA_Controller.updateSpeed(this.value)">
+        <span id="speedValue">1x</span>
+        <label>رنگ سلول/color cell:</label>
+	<select id="colorSelect">
+  	  <option value="1">نارنجی / orange</option>
+  	  <option value="2">آبی / blue</option>
+  	  <option value="3">قرمز / red</option>
+  	  <option value="4">زرد / yelow</option>
+  	  <option value="5">سبز / green</option>
+	</select>
+
+        <label>الگوی آماده/Ready Lego pattern:</label>
+        <select id="patternSelect" onchange="CA_Controller.placePattern(this.value, 100, 100)">
+            <option value="">-- حالت کشیدن دستی/Manual drag mode --</option>
+            <option value="glider">Glider</option>
+            <option value="lwss">LWSS (فضاپیمای سبک)</option>
+            <option value="hwss">HWSS (فضاپیمای سنگین)</option>
+            <option value="gosper_gun">Gosper Glider Gun (تولیدکننده گلایدر)</option>
+            <option value="pulsar">Pulsar</option>
+            <option value="diehard">Diehard</option>
+            <option value="acorn">Acorn (بزرگ‌شونده)</option>
+            <option value="rpentomino">R-Pentomino (زندگی طولانی)</option>
+        </select>
+    </section>
+    <main id="canvasWrapper">
+      <canvas id="gridCA" width="800" height="600"></canvas>
+      <canvas id="gridMath" width="800" height="600"></canvas>
+      <div id="threeDContainer"></div>
+    </main>
+<form id="mathControls" onsubmit="event.preventDefault();">
+  <label>عبارت ریاضی یا اوکتیونی یا تابع/Mathematical or octal expression or function:</label>
+  <input id="octExpr" placeholder="x^2 + y^2 = 25" oninput="renderMath()" />
+  <div id="preview"></div>
+  <label>زوم نمودار/Zoom chart:</label>
+  <input type="range" min="0.2" max="5" step="0.1" value="1"
+         oninput="MathLab.updateChartZoom(this.value)">
+  <div class="math-buttons" style="margin-top:12px">
+        <button type="button" onclick="MathLab.insertMatrix()">[M] ساخت ماتریس</button>
+
+        <button type="button" onclick="MathLab.insertOp('+')">+</button>
+        <button type="button" onclick="MathLab.insertOp('-')">−</button>  
+	<button type="button" onclick="MathLab.insertOp('÷')">÷</button> 
+	<button type="button" onclick="MathLab.insertOp('×')">×</button> 
+	<button type="button" onclick="MathLab.insertOp('^')">^</button> 
+        <button type="button" onclick="MathLab.insertRadical()">√</button>
+   	<button type="button" onclick="MathLab.runOp('abs')">|...|</button>
+   	<button type="button" onclick="MathLab.runOp('sgn')">sgn</button>
+
+	<button type="button" onclick="MathLab.insertComplexOp('logN')">logₙ</button>
+	<button type="button" onclick="MathLab.runOp('log')">ln</button> 
+	<button type="button" onclick="MathLab.runOp('log10')">log₁₀</button>
+
+	<button type="button" onclick="MathLab.runOp('sin')">sin</button>
+	<button type="button" onclick="MathLab.runOp('cos')">cos</button> 
+	<button type="button" onclick="MathLab.runOp('tan')">tan</button> 
+	<button type="button" onclick="MathLab.runOp('arcsin')">arcsin</button> 
+	<button type="button" onclick="MathLab.runOp('arccos')">arccos</button> 
+	<button type="button" onclick="MathLab.runOp('arctan')">arctan</button> 
+	<button type="button" onclick="MathLab.runOp('sinh')">sinh</button> 
+	<button type="button" onclick="MathLab.runOp('cosh')">cosh</button> 
+	<button type="button" onclick="MathLab.runOp('tanh')">tanh</button> 
+	<button type="button" onclick="MathLab.runOp('csc')">csc</button> 
+	<button type="button" onclick="MathLab.runOp('sec')">sec</button> 
+	<button type="button" onclick="MathLab.runOp('cot')">cot</button> 
+
+   	<button type="button" onclick="MathLabOps.integrateIndefinite(document.getElementById('octExpr').value,'x')">∫ نامعین</button>
+   	<button type="button" onclick="MathLab.insertComplexOp('int')">∫ معین</button>
+	<button type="button" onclick="MathLabOps.derivative(document.getElementById('octExpr').value, 'x')">d/dx</button>
+	<button type="button" onclick="MathLabOps.gradient(document.getElementById('octExpr').value)"> ∇</button>
+	<button type="button" onclick="MathLabOps.laplacian(document.getElementById('octExpr').value)"> ∇²</button>
+
+   	<button type="button" onclick="MathLab.insertComplexOp('sum')">∑</button>
+     	<button type="button" onclick="MathLab.insertComplexOp('prod')">∏</button>
+ 
+   	<button type="button" onclick="MathLab.insertComplexOp('gamma')">(...)Γ</button>
+   	<button type="button" onclick="MathLab.insertComplexOp('erfc')">erfc</button>
+  </div>
+  <div class="math-symbols">
+    <button type="button" onclick="MathLab.insertSymbol('π')">π</button>
+    <button type="button" onclick="MathLab.insertSymbol('e')">e</button>
+    <button type="button" onclick="MathLab.insertSymbol('φ')">φ</button>
+  </div>
+     	<button type="button" onclick="MathLab.draw2DOrPolarOrImplicit()">📈 رسم دوبعدی/قطبی/ضمنی</button>
+   	<button type="button" onclick="MathLab.draw3DPlot()">🌐 رسم سه‌بعدی</button>
+   	<button type="button" onclick="MathLab.showOctonion()">🧮 اوکتنیون</button>
+   	<button type="button" onclick="MathLabOps.evalExpr(document.getElementById('octExpr').value)">🔍 محاسبه مقدار</button>
+
+  <div id="output" style="margin-top: 20px;"></div>
+</form>
+
+
+    <script src="math_controller.js"></script>
+    <script src="ca_controller.js"></script>
+
+ <script>
+  window.addEventListener('DOMContentLoaded', function () {
+    if (window.CA_Controller && typeof CA_Controller.init === 'function') {
+      CA_Controller.init();
+    } else {
+      console.error('CA_Controller.init در دسترس نیست/CA_Controller.init  Disaster Nest.');
+    }
+  }); 
+
+  function computeCentral() {
+    const expr = document.getElementById('octExpr').value.trim();
+    if (!expr) { 
+      document.getElementById('output').innerHTML = 'ℹ️ عبارتی وارد نشده است./ Your phrase is narrated by us.';return;}
+    if (/e[1-7]/.test(expr)) { MathLab.showOctonion(); return; }
+    if (/^r\s*=/.test(expr)) { MathLab.drawPolarPlot ? MathLab.drawPolarPlot(expr) : MathLab.draw2DOrPolarOrImplicit(); return; }
+    if (expr.includes('=')) { MathLab.draw2DOrPolarOrImplicit(); return; }
+    if (expr.includes('x') && expr.includes('y')) { MathLab.draw3DPlot(); return; }
+    if (expr.includes('x')) { MathLab.draw2DOrPolarOrImplicit(); return; }
+    MathLabOps.evalExpr(expr);
+  }
+
+</script>
+</body>
+</html>
